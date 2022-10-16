@@ -1,0 +1,118 @@
+---
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: postgresql-hostpath
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: docker.io/hostpath
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: postgresql-pv
+  labels:
+    app: postgresql-db
+spec:
+  storageClassName: postgresql-hostpath
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/var/data"
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: postgresql-pv-claim
+  labels:
+    app: postgresql-db
+spec:
+  storageClassName: postgresql-hostpath
+  capacity:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-config
+  labels:
+    app: postgresql-db
+data:
+  POSTGRES_DB: postgresqldb
+  POSTGRES_USER: postgresqluser
+  POSTGRES_PASSWORD: postgresqlpassword
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-exporter-config
+  labels:
+    app: postgresql-db
+data:
+  DATA_SOURCE_NAME: postgresql://postgresqluser:postgresqlpassword@localhost:5432/postgresqldb
+---
+# PostgreSQL StatefulSet
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgresql-statefulset
+  labels:
+    app: postgresql-db
+spec:
+  serviceName: "postgresql-db"
+  replicas: 3
+  selector:
+    matchLabels:
+      app: postgresql-db
+  template:
+    metadata:
+      labels:
+        app: postgresql-db
+      annotations:
+        prometheus.io/scrape: 'true'
+        prometheus.io/port:   '9187'
+    spec:
+      containers:
+      - name: postgresql-db
+        image: postgres-ssl:v1.0.0
+        envFrom:
+        - configMapRef:
+            name: postgresql-config
+        ports:
+        - containerPort: 5432
+          name: postgresdb
+        volumeMounts:
+        - name: pv-data
+          mountPath: /var/lib/postgresql/data
+      - name: postgresql-exporter
+        image: prometheuscommunity/postgres-exporter:latest
+        envFrom:
+        - configMapRef:
+            name: postgresql-exporter-config
+        ports:
+        - containerPort: 9187
+          name: pg-exporter
+      volumes:
+      - name: pv-data
+        persistentVolumeClaim:
+          claimName: postgresql-pv-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-db
+  labels:
+    app: postgresql-db
+spec:
+  ports:
+  - port: 5432
+    protocol: TCP
+    targetPort: 5432
+  selector:
+    app: postgresql-db

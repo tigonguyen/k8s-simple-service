@@ -1,0 +1,71 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgresql-url
+  labels:
+    app: simple-service
+data:
+  POSTGRES_URL: postgres://postgresqluser:postgresqlpassword@postgresql-db.default.svc.cluster.local/postgresqldb
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simple-service
+  labels:
+    app: simple-service
+spec:
+  selector:
+    matchLabels:
+      app: simple-service
+  template:
+    metadata:
+      labels:
+        app: simple-service
+    spec:
+      containers:
+      - name: simple-service
+        image: simple-service:v1.0.0
+        ports:
+        - containerPort: 8000
+        envFrom:
+        - configMapRef:
+            name: postgresql-url
+---
+# Create the HorizontalPodAutoscaler for scaling based on Pods' metric
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: simple-service
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: simple-service
+  minReplicas: 2
+  maxReplicas: 5
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 80
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageUtilization: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: simple-service
+  labels:
+    app: simple-service
+spec:
+  type: NodePort
+  ports:
+  - port: 8000
+    protocol: TCP
+    targetPort: 8000
+    nodePort: 30800
+  selector:
+    app: simple-service
