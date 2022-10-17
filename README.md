@@ -1,6 +1,15 @@
-# simple-service
+# simple-service-private
 ## Services diagram
 ![](./images/k8s-simple-service.png)
+## Usage
+Build and deploy the app:
+```
+make build deploy
+```
+Clean the infrastruture:
+```
+make clean
+```
 ## Working steps
 1. Dockerfile simple-service:
 - [x] Use `k8s/simple-service/Dockerfile` to build image named `simple-serivce:v1.0.0`.
