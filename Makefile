@@ -1,3 +1,7 @@
+infra:
+	minikube start
+	minikube kubectl
+	
 build:
 	cd simple-service && $(MAKE) build
 	cd postgresql && $(MAKE) build

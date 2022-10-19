@@ -33,7 +33,7 @@ spec:
             name: postgresql-url
 ---
 # Create the HorizontalPodAutoscaler for scaling based on Pods' metric
-apiVersion: autoscaling/v2beta1
+apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: simple-service
@@ -48,11 +48,9 @@ spec:
   - type: Resource
     resource:
       name: cpu
-      targetAverageUtilization: 80
-  - type: Resource
-    resource:
-      name: memory
-      targetAverageUtilization: 80
+      target:
+        type: Utilization
+        averageUtilization: 75
 ---
 apiVersion: v1
 kind: Service

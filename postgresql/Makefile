@@ -3,10 +3,10 @@ TAG ?= v1.0.0
 DB_MANIFEST ?= postgresql.yml
 
 build:
-	docker build -t ${DB_IMAGE_NAME}:${TAG} .
+	minikube image build -t ${DB_IMAGE_NAME}:${TAG} .
 
 deploy:
-	kubectl apply -f ${DB_MANIFEST}
+	minikube kubectl -- apply -f ${DB_MANIFEST}
 
 clean:
-	kubectl delete -f ${DB_MANIFEST}
+	minikube kubectl -- delete -f ${DB_MANIFEST}

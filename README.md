@@ -1,12 +1,28 @@
 # simple-service-private
 ## Services diagram
 ![](./images/k8s-simple-service.png)
+## Prerequisites:
+- `minikube` installed. Followed the instructions [here](https://minikube.sigs.k8s.io/docs/start/)
+- Container or virtual machine manager, such as: Docker, Hyperkit, Hyper-V, KVM, Parallels, Podman, VirtualBox, or VMware Fusion/Workstation.
 ## Usage
-Build and deploy the app:
+1. Start the `minikube` cluster and install `kubectl` for the cluster:
+```
+make infra
+```
+2. Build and deploy the app:
 ```
 make build deploy
 ```
-Clean the infrastruture:
+3. Run every single below commands in 3 different terminals to get services' link:
+```
+minikube service simple-service --url=true 
+minikube service prometheus-service --url=true 
+minikube service grafana --url=true 
+```
+4. Configure Grafana
+- Using `admin/admin` credential to access Grafana
+- Import Postgres dashboard with the ID is `9628` and the data-source is `promethues`
+5. Clean the infrastruture:
 ```
 make clean
 ```

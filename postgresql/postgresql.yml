@@ -30,7 +30,6 @@ metadata:
     app: postgresql-db
 spec:
   storageClassName: postgresql-hostpath
-  capacity:
   accessModes:
     - ReadWriteOnce
   resources:
