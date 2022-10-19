@@ -20,6 +20,7 @@ minikube service prometheus-service --url=true
 minikube service grafana --url=true 
 ```
 Remember to add `/live` after `simple-service` URL.
+
 4. Configure Grafana
 - Using `admin/admin` credential to access Grafana
 - Import Postgres dashboard with the ID is `9628` and the data-source is `promethues`
