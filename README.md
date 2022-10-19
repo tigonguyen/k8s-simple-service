@@ -2,7 +2,7 @@
 ## Services diagram
 ![](./images/k8s-simple-service.png)
 ## Prerequisites:
-- `minikube` installed. Followed the instructions [here](https://minikube.sigs.k8s.io/docs/start/)
+- `minikube` installed. Follow the instructions [here](https://minikube.sigs.k8s.io/docs/start/)
 - Container or virtual machine manager, such as: Docker, Hyperkit, Hyper-V, KVM, Parallels, Podman, VirtualBox, or VMware Fusion/Workstation.
 ## Usage
 1. Start the `minikube` cluster and install `kubectl` for the cluster:
@@ -19,6 +19,7 @@ minikube service simple-service --url=true
 minikube service prometheus-service --url=true 
 minikube service grafana --url=true 
 ```
+Remember to add `/live` after `simple-service` URL.
 4. Configure Grafana
 - Using `admin/admin` credential to access Grafana
 - Import Postgres dashboard with the ID is `9628` and the data-source is `promethues`
