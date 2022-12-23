@@ -1,4 +1,4 @@
-# kubernetes-simple-service
+# k8s-simple-service
 ## Services diagram
 ![](./images/k8s-simple-service.png)
 ## Prerequisites:
