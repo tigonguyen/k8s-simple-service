@@ -54,3 +54,6 @@ openssl x509 -req -days 365000 -set_serial 01 -in server.csr -out server.cert -C
 - [x] Create Prometheus Depoyment and scrape Postgres metrics from sidecar container.
 - [x] Create Grafana Deployment. Show metrics from Prometheus data-source with the dashboard template id `9628` (for PostgresDB).
 ![](./images/grafana-dashboard.png)
+
+## References
+- [Simple service](https://github.com/Onefootball/simple-service)
